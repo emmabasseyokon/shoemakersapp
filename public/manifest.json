@@ -1,0 +1,23 @@
+{
+  "name": "Shoemakers Association",
+  "short_name": "Shoemakers",
+  "description": "Monthly billing management for shoemaker association members",
+  "start_url": "/admin",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f9fafb",
+  "theme_color": "#92400e",
+  "icons": [
+    {
+      "src": "/icon",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-icon",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
