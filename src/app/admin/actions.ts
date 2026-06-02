@@ -45,7 +45,6 @@ export async function createMember(
       phone,
       address: address.length > 0 ? address : null,
       membership_number,
-      active: true,
     })
     .select('id')
     .single()
@@ -96,24 +95,6 @@ export async function updateMember(
   return { success: true }
 }
 
-export async function toggleMemberActive(
-  memberId: string,
-  active: boolean,
-): Promise<{ error: string } | { success: true }> {
-  const auth = await verifyAdmin()
-  if (!auth.ok) return { error: auth.error }
-  if (!UUID_RE.test(memberId)) return { error: 'Invalid member ID.' }
-
-  const { error } = await auth.supabase
-    .from('members')
-    .update({ active })
-    .eq('id', memberId)
-
-  if (error) return { error: error.message }
-  revalidatePath('/admin/members')
-  return { success: true }
-}
-
 export async function deleteMember(
   memberId: string,
 ): Promise<{ error: string } | { success: true }> {
@@ -140,9 +121,9 @@ export async function ensureMonthBills(
   const auth = await verifyAdmin()
   if (!auth.ok) return { error: auth.error }
 
-  // Fetch all active members and all bill types
+  // Fetch all members and all bill types
   const [membersRes, billTypesRes] = await Promise.all([
-    auth.supabase.from('members').select('id').eq('active', true),
+    auth.supabase.from('members').select('id'),
     auth.supabase.from('bill_types').select('id, default_amount'),
   ])
 

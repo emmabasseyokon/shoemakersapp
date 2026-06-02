@@ -36,7 +36,6 @@ export interface Database {
           phone: string
           address: string | null
           membership_number: string
-          active: boolean
           created_at: string
         }
         Insert: {
@@ -45,7 +44,6 @@ export interface Database {
           phone: string
           address?: string | null
           membership_number: string
-          active?: boolean
           created_at?: string
         }
         Update: {
@@ -54,7 +52,6 @@ export interface Database {
           phone?: string
           address?: string | null
           membership_number?: string
-          active?: boolean
         }
         Relationships: []
       }

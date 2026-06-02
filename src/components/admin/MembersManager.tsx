@@ -42,7 +42,6 @@ export function MembersManager({ initialMembers }: Props) {
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase()
     return members.filter(m => {
-      if (!m.active) return false
       if (q && !m.full_name.toLowerCase().includes(q) && !m.membership_number.toLowerCase().includes(q)) return false
       return true
     })
@@ -254,7 +253,6 @@ function MemberFormModal({ title, submitLabel, member, onClose, onSubmitted, err
         phone,
         address: address || null,
         membership_number: membershipNumber,
-        active: true,
         created_at: new Date().toISOString(),
       })
     }

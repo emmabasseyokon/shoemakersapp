@@ -1,11 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Member } from '@/types/database.types'
 
-export async function getMembers(activeOnly = false): Promise<Member[]> {
+export async function getMembers(): Promise<Member[]> {
   const supabase = await createClient()
-  let query = supabase.from('members').select('*').order('full_name')
-  if (activeOnly) query = query.eq('active', true)
-  const { data, error } = await query
+  const { data, error } = await supabase.from('members').select('*').order('full_name')
   if (error) throw error
   return data ?? []
 }

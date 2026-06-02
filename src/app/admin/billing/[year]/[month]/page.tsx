@@ -25,7 +25,7 @@ export default async function BillingMonthPage({ params }: Props) {
   await ensureMonthBills(year, month)
 
   const [members, billTypes, bills] = await Promise.all([
-    getMembers(true), // active only
+    getMembers(),
     getBillTypes(),
     getMonthlyBills(year, month),
   ])

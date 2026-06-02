@@ -40,7 +40,6 @@ create table if not exists members (
   phone              text not null,
   address            text,
   membership_number  text not null unique,
-  active             boolean not null default true,
   created_at         timestamptz not null default now()
 );
 
