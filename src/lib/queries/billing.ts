@@ -38,7 +38,7 @@ export async function getDashboardSummary(year: number, month: number) {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('monthly_bills')
-    .select('amount, paid')
+    .select('amount, paid, bill_type_id, bill_types(name)')
     .eq('year', year)
     .eq('month', month)
   if (error) throw error
@@ -47,5 +47,12 @@ export async function getDashboardSummary(year: number, month: number) {
   const collected = bills.filter(b => b.paid).reduce((sum, b) => sum + b.amount, 0)
   const outstanding = total - collected
   const paidCount = bills.filter(b => b.paid).length
-  return { total, collected, outstanding, paidCount, totalCount: bills.length }
+
+  const byCategory: Record<string, number> = {}
+  for (const b of bills.filter(b => b.paid)) {
+    const name = (b.bill_types as { name: string } | null)?.name ?? 'Unknown'
+    byCategory[name] = (byCategory[name] ?? 0) + b.amount
+  }
+
+  return { total, collected, outstanding, paidCount, totalCount: bills.length, byCategory }
 }
