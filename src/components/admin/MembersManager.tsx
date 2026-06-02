@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   createMember,
   updateMember,
-  toggleMemberActive,
   deleteMember,
 } from '@/app/admin/actions'
 import type { Member } from '@/types/database.types'
@@ -18,8 +17,6 @@ interface Props {
 export function MembersManager({ initialMembers }: Props) {
   const [members, setMembers] = useState<Member[]>(initialMembers)
   const [search, setSearch] = useState('')
-  const [showInactive, setShowInactive] = useState(false)
-
   const [createOpen, setCreateOpen] = useState(false)
   const [editMember, setEditMember] = useState<Member | null>(null)
   const [deletingMember, setDeletingMember] = useState<Member | null>(null)
@@ -45,19 +42,11 @@ export function MembersManager({ initialMembers }: Props) {
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase()
     return members.filter(m => {
-      if (!showInactive && !m.active) return false
+      if (!m.active) return false
       if (q && !m.full_name.toLowerCase().includes(q) && !m.membership_number.toLowerCase().includes(q)) return false
       return true
     })
-  }, [members, search, showInactive])
-
-  async function handleToggleActive(member: Member) {
-    setLoading(true)
-    const result = await toggleMemberActive(member.id, !member.active)
-    if ('error' in result) { setError(result.error); setLoading(false); return }
-    setMembers(prev => prev.map(m => m.id === member.id ? { ...m, active: !member.active } : m))
-    setLoading(false)
-  }
+  }, [members, search])
 
   async function handleDelete() {
     if (!deletingMember) return
@@ -96,15 +85,6 @@ export function MembersManager({ initialMembers }: Props) {
               className={inputCls}
             />
           </div>
-          <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
-            <input
-              type="checkbox"
-              checked={showInactive}
-              onChange={e => setShowInactive(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-amber-600"
-            />
-            Show inactive
-          </label>
         </CardContent>
       </Card>
 
@@ -143,13 +123,6 @@ export function MembersManager({ initialMembers }: Props) {
                       Edit
                     </button>
                     <button
-                      onClick={() => handleToggleActive(m)}
-                      disabled={loading}
-                      className={`text-xs hover:underline ${m.active ? 'text-yellow-600 hover:text-yellow-800' : 'text-green-600 hover:text-green-800'}`}
-                    >
-                      {m.active ? 'Deactivate' : 'Reactivate'}
-                    </button>
-                    <button
                       onClick={() => setDeletingMember(m)}
                       className="text-xs text-red-500 hover:text-red-700 hover:underline"
                     >
@@ -171,9 +144,6 @@ export function MembersManager({ initialMembers }: Props) {
                     {openDropdown === m.id && (
                       <div className="absolute right-0 top-9 z-10 min-w-[160px] rounded-xl border border-gray-200 bg-white py-1 shadow-lg">
                         <button onClick={() => { setOpenDropdown(null); setError(null); setEditMember(m) }} className="block w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50">Edit</button>
-                        <button onClick={() => { setOpenDropdown(null); handleToggleActive(m) }} className={`block w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 ${m.active ? 'text-yellow-600' : 'text-green-600'}`}>
-                          {m.active ? 'Deactivate' : 'Reactivate'}
-                        </button>
                         <button onClick={() => { setOpenDropdown(null); setDeletingMember(m) }} className="block w-full px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50">Delete</button>
                       </div>
                     )}
