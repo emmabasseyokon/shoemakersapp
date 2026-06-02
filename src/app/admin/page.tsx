@@ -29,7 +29,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Current month summary */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Link href="/admin/members">
           <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
             <p className="text-xs font-medium text-gray-500">All Members</p>
